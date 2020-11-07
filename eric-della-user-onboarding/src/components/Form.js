@@ -12,6 +12,10 @@ export default function Form() {
         terms: ""
     };
 
+    //declare users state
+
+    const [users, setUsers] = useState([{}]);
+
     //temporary state used to set state
     const [post, setPost] = useState([]);
 
@@ -65,6 +69,7 @@ export default function Form() {
             setIsButtonDisabled(!valid)
         });
     },[formState]);
+    
 
     //onSubmit function
 
@@ -78,9 +83,15 @@ export default function Form() {
         .then(response => {
             //update temp state with value to display
             setPost(response.data);
+            setUsers([response.data, ...users])
 
             //clear state
-            setFormState({initialFormState})
+            setFormState({
+                name: "",
+                email: "",
+                password: "",
+                terms: ""
+              });
 
             //clear any server error
             setServerError(null);
@@ -102,7 +113,7 @@ export default function Form() {
         validateChange(e);
         setFormState(newformData);  
     };
-
+console.log(users)
     return(
         <form onSubmit={formSubmit}>
             {serverError ? <p className="error">{serverError}
@@ -148,13 +159,13 @@ export default function Form() {
                 <input 
                 type="checkbox"
                 name="terms"
-                checked={true}
+                checked={formState.terms}
                 onChange={inputChange}
                 />
                 Terms & Conditions
             </label>
             <pre>{JSON.stringify(post, null, 2)}</pre>
-            <button  type="submit">
+            <button  id="submit" disabled={isButtonDisabled} type="submit">
                 Submit
             </button>
             
